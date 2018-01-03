@@ -7,40 +7,77 @@ import Cards from "./components/Cards/Cards";
 import img_source from "./cards_img.json";
 
 class App extends Component {
+  // Initial States
   state = {
-    images_sources: [...img_source],
-    counter: 0
+    images_sources: img_source,
+    counter: 0,
+    Hight_score: 0
   };
 
+  // This funtion handle the click event from the pitures.
+  // returns a random array
+  // /////////////////////////////////////////
   clickEventHandler = index => {
-    console.log("Is click it " + index);
     // Pull counter
     let new_counter = this.state.counter;
+    let higth_score = this.state.Hight_score;
+    const temp_array = [...this.state.images_sources];
+    let reset = false;
 
-    const new_card_array = this.state.images_sources.map(card => {
-      if (card.id === index) {
-        card.click_state = true;
-        new_counter = ++new_counter;
-      }
+    const new_card_array = temp_array.map(card => {
+      if (card.id === index)
+        if (!card.click_state) {
+          card.click_state = true;
+          new_counter = ++new_counter;
+        } else {
+          //If the Card is already pickup
+          higth_score = new_counter;
+          new_counter = 0;
+          console.log("reset the card");
+          reset = true;
+        }
       return card;
     });
-    console.log(new_card_array);
-    this.setState({
-      images_sources: new_card_array.sort(() => 0.5 - Math.random()),
-      counter: new_counter
-    });
-    //   new_card_array.sort(() => 0.5 - Math.random())
+    //This section would determine if the status of the card need to be reset
+    if (!reset) {
+      this.setState({
+        images_sources: new_card_array.sort(() => 0.5 - Math.random()),
+        counter: new_counter,
+        Hight_score: higth_score
+      });
+    } else {
+      //Procedure to reset the status of the card to all False
+      let final_score = 0;
+      let reset_array = temp_array.map(card => {
+        card.click_state = false;
+        return card;
+      });
+      if (higth_score > this.state.Hight_score) {
+        final_score = higth_score;
+      } else {
+        final_score = this.state.Hight_score;
+      }
+      this.setState({
+        images_sources: reset_array.sort(() => 0.5 - Math.random()),
+        counter: 0,
+        Hight_score: final_score
+      });
+    }
   };
+  ////////////////////RENDER///////////////////
   render() {
-    console.log(this.state.images_sources);
+    console.log(this.state);
+    // console.log(initialState);
     return (
       <div className="App">
         {/* Here go the Header Portion */}
         <div>
-          <Header counter={this.state.counter} />
+          <Header
+            counter={this.state.counter}
+            hight_score={this.state.Hight_score}
+          />
         </div>
-        {/* End the Header Portion */}
-        {/* JUMBO TRON SECTION */}
+        {/* End the Header Portion */} {/* JUMBO TRON SECTION */}
         <div>
           <Jumbo />
         </div>
@@ -52,7 +89,7 @@ class App extends Component {
                 <Cards
                   key={card.id}
                   image={card.source}
-                  click={() => this.clickEventHandler(index)}
+                  click={() => this.clickEventHandler(card.id)}
                 />
               ))}
             </div>

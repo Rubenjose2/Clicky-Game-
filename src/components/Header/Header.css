@@ -1,4 +1,10 @@
-h3 {
-    color: white;
-    text-align: center;
+.navbar-default {
+    background-image: linear-gradient(to bottom, #ff00dd 0, #000000 100%);
+    border-color: #000000;
+    font-family: 'Coming Soon', cursive;
+    font-size: 150%
+}
+
+.navbar-default .navbar-text {
+    color: #fff;
 }

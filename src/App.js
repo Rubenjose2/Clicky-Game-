@@ -5,6 +5,9 @@ import Jumbo from "./components/Jumbo/Jumbo";
 import Cards from "./components/Cards/Cards";
 // import the img_source from a Json file
 import img_source from "./cards_img.json";
+//import audio soounds//
+import success from "./sounds/light.mp3";
+import bad_choice from "./sounds/dont-think-so.mp3";
 
 class App extends Component {
   // Initial States
@@ -17,6 +20,7 @@ class App extends Component {
   // This funtion handle the click event from the pitures.
   // returns a random array
   // /////////////////////////////////////////
+
   clickEventHandler = index => {
     // Pull counter
     let new_counter = this.state.counter;
@@ -24,16 +28,29 @@ class App extends Component {
     const temp_array = [...this.state.images_sources];
     let reset = false;
 
+    //alerts to Good Response
+    const playGoodAudio = () => {
+      let audio = new Audio(success);
+      audio.play();
+    };
+    //alert to bad response
+    const playBadAudio = () => {
+      let audio = new Audio(bad_choice);
+      audio.play();
+    };
+
     const new_card_array = temp_array.map(card => {
       if (card.id === index)
         if (!card.click_state) {
           card.click_state = true;
           new_counter = ++new_counter;
+          playGoodAudio();
         } else {
           //If the Card is already pickup
           higth_score = new_counter;
           new_counter = 0;
           console.log("reset the card");
+          playBadAudio();
           reset = true;
         }
       return card;
